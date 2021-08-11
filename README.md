@@ -1,5 +1,5 @@
 # Sequence Editor
-Sequence Editor with various personel uses for the professors at Technische Universität Braunschweig
+An Editor specifically designed to visualize, edit, format and convert DNA sequences in various formats such as fasta, fastq, nexus, phylip and others
 
 
 ## Running the Application
