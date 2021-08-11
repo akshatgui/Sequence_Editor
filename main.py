@@ -15,11 +15,11 @@ class AppDemo(QMainWindow):
         #self.resize(self.screen_width * 2, self.screen_height * 2)
        
 
-        self.filterTypes = 'Text Document (*.txt);; Python (*.py);; Markdown (*.md)'
+        self.filterTypes = '(*.fas);;(*.fa);;(*.fsa);;(*.fastaq);;(*.nex);;(*.nxs);;(*.phy);;(*.gb);;Text Document (*.txt);; Python (*.py);; Markdown (*.md)'
         self.path = None
 
         fixedFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        fixedFont.setPointSize(12)
+        fixedFont.setPointSize(10)
 
         mainLayout = QVBoxLayout()
 
@@ -89,6 +89,9 @@ class AppDemo(QMainWindow):
         icon_action = self.create_action(self, './icon/itaxo.jpeg', 'About', 'About',self.openAbout )
         edit_toolbar.addAction(icon_action)
 
+        self.showMaximized()
+
+        
 
         self.update_title()
         self.show()
@@ -118,6 +121,9 @@ class AppDemo(QMainWindow):
                 self.path = path
                 self.editor.setPlainText(text)
                 self.update_title()
+
+
+
 
     def file_save(self):
         if self.path is None:
