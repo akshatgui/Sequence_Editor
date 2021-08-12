@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLa
 from PyQt5.QtCore import Qt, QSize                 
 from PyQt5.QtGui import QFontDatabase, QIcon, QKeySequence,QPixmap
 from PyQt5.QtPrintSupport import QPrintDialog
+import syntax_pars
+
 
 class AppDemo(QMainWindow):
     def __init__(self):
@@ -11,9 +13,7 @@ class AppDemo(QMainWindow):
         self.setWindowIcon(QIcon('./icon/text.jpg'))
         self.screen_width, self.screen_height = self.geometry().width, self.geometry().height()
         
-        
-        #self.resize(self.screen_width * 2, self.screen_height * 2)
-       
+               
 
         self.filterTypes = '(*.fas);;(*.fa);;(*.fsa);;(*.fastaq);;(*.nex);;(*.nxs);;(*.phy);;(*.gb);;Text Document (*.txt);; Python (*.py);; Markdown (*.md)'
         self.path = None
@@ -24,7 +24,8 @@ class AppDemo(QMainWindow):
         mainLayout = QVBoxLayout()
 
         self.editor = QPlainTextEdit()
-        self.editor.setFont(fixedFont)
+        
+        
         mainLayout.addWidget(self.editor)
 
 
@@ -38,7 +39,9 @@ class AppDemo(QMainWindow):
 
         file_menu = self.menuBar().addMenu('&File')
 
+        #Toolbar
 
+        
         file_toolbar = QToolBar('File')
         file_toolbar.setIconSize(QSize(60, 60))
         self.addToolBar(Qt.BottomToolBarArea, file_toolbar)
@@ -94,6 +97,16 @@ class AppDemo(QMainWindow):
         
 
         self.update_title()
+
+        #Syntax Highlighter
+        self.editor.setStyleSheet("""QPlainTextEdit{
+	            font-family:'Consolas'; 
+	            color: #ccc; 
+	            background-color: #2b2b2b;}""")
+        self.highlight = syntax_pars.PythonHighlighter(self.editor.document())
+
+
+
         self.show()
 
     def toggle_wrap_text(self):
