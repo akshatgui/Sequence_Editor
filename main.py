@@ -12,6 +12,7 @@ from PyQt5.uic import loadUiType
 
 FORM_CLASS, _ = loadUiType("ui/main.ui")
 
+
 class SequenceEditor(QMainWindow, FORM_CLASS):
     def __init__(self):
         super().__init__()
@@ -23,13 +24,12 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.setupUi(self)
         self.connectTriggers()
 
-
         fixedFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         fixedFont.setPointSize(config.FONT_SIZE)
 
         # Syntax Highlighter
         self.editor.setStyleSheet(config.EDITOR_STYLE)
-        self.highlighter = config.HIGHLIGHTERS['py'](self.editor.document())
+        self.highlighter = config.HIGHLIGHTERS["py"](self.editor.document())
 
     def connectTriggers(self):
         self.action_Open.triggered.connect(self.file_open)
@@ -55,14 +55,15 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             self.editor.setPlainText(text)
             self.path = path
             self.setWindowTitle(os.path.basename(path))
-            self.highlighter = config.HIGHLIGHTERS[path.split('.')[-1]](self.editor.document())
+            self.highlighter = config.HIGHLIGHTERS[path.split(".")[-1]](
+                self.editor.document()
+            )
 
         except Exception as e:
             self.dialog_message(str(e))
-                
 
     def file_save(self):
-        if self.path == 'Untitled':
+        if self.path == "Untitled":
             self.file_saveAs()
             return
 
@@ -84,8 +85,10 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
                 f.write(text)
                 self.path = path
                 self.setWindowTitle(os.path.basename(path))
-                self.highlighter = config.HIGHLIGHTERS[path.split('.')[-1]](self.editor.document())
-                
+                self.highlighter = config.HIGHLIGHTERS[path.split(".")[-1]](
+                    self.editor.document()
+                )
+
         except Exception as e:
             self.dialog_message(str(e))
 
