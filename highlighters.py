@@ -76,7 +76,6 @@ class PythonHighlighter(QSyntaxHighlighter):
         "None",
         "True",
         "False",
-        
     ]
 
     # Python operators
@@ -226,7 +225,6 @@ class PythonHighlighter(QSyntaxHighlighter):
             return False
 
 
-
 class NexHighlighter(QSyntaxHighlighter):
     """Syntax highlighter for the Python language."""
 
@@ -271,7 +269,6 @@ class NexHighlighter(QSyntaxHighlighter):
         "NEXT",
         "BEGIN",
         "END",
-        
     ]
 
     # Nex operators
@@ -332,9 +329,7 @@ class NexHighlighter(QSyntaxHighlighter):
         rules += [
             (r"\b%s\b" % w, 0, STYLES["keyword"]) for w in NexHighlighter.keywords
         ]
-        rules += [
-            (r"%s" % o, 0, STYLES["operator"]) for o in NexHighlighter.operators
-        ]
+        rules += [(r"%s" % o, 0, STYLES["operator"]) for o in NexHighlighter.operators]
         rules += [(r"%s" % b, 0, STYLES["brace"]) for b in NexHighlighter.braces]
 
         # All other rules
@@ -426,9 +421,7 @@ class FasHighlighter(QSyntaxHighlighter):
 
     # Nex keywords
 
-    keywords = [
-        
-    ]
+    keywords = []
 
     # Nex operators
     operators = [
@@ -488,9 +481,7 @@ class FasHighlighter(QSyntaxHighlighter):
         rules += [
             (r"\b%s\b" % w, 0, STYLES["keyword"]) for w in NexHighlighter.keywords
         ]
-        rules += [
-            (r"%s" % o, 0, STYLES["operator"]) for o in NexHighlighter.operators
-        ]
+        rules += [(r"%s" % o, 0, STYLES["operator"]) for o in NexHighlighter.operators]
         rules += [(r"%s" % b, 0, STYLES["brace"]) for b in NexHighlighter.braces]
 
         # All other rules
@@ -582,9 +573,7 @@ class FastqHighlighter(QSyntaxHighlighter):
 
     # Nex keywords
 
-    keywords = [
-        
-    ]
+    keywords = []
 
     # Nex operators
     operators = [
@@ -644,9 +633,7 @@ class FastqHighlighter(QSyntaxHighlighter):
         rules += [
             (r"\b%s\b" % w, 0, STYLES["keyword"]) for w in NexHighlighter.keywords
         ]
-        rules += [
-            (r"%s" % o, 0, STYLES["operator"]) for o in NexHighlighter.operators
-        ]
+        rules += [(r"%s" % o, 0, STYLES["operator"]) for o in NexHighlighter.operators]
         rules += [(r"%s" % b, 0, STYLES["brace"]) for b in NexHighlighter.braces]
 
         # All other rules
@@ -733,5 +720,3 @@ class FastqHighlighter(QSyntaxHighlighter):
             return True
         else:
             return False
-
-

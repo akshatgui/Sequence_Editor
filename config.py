@@ -16,7 +16,6 @@ class Config:
             "fa": highlighters.FasHighlighter,
             "fsa": highlighters.FasHighlighter,
             "fastq": highlighters.FastqHighlighter,
-            
         }
         self.EDITOR_STYLE = """QPlainTextEdit{font-family:'Consolas';}"""
         self.FONT_SIZE = 4
