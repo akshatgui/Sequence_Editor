@@ -26,15 +26,15 @@ def format(color, style=""):
 # Syntax styles that can be shared by all languages
 
 STYLES = {
-    "keyword": format([100, 250, 50], "bold"),
-    "operator": format([250, 100, 100]),
+    "keyword": format([50, 205, 50], "bold"),
+    "operator": format([255,0,255]),
     "brace": format("darkGray"),
-    "defclass": format([220, 220, 255], "bold"),
-    "string": format([20, 110, 100]),
-    "string2": format([30, 120, 110]),
-    "comment": format([128, 128, 128]),
-    "self": format([150, 85, 140], "italic"),
-    "numbers": format([100, 150, 190]),
+    "defclass": format([199,21,133], "bold"),
+    "string": format([255, 140, 0]),
+    "string2": format([128, 128, 0]),
+    "comment": format([47,79,79]),
+    "self": format([138,43,226], "italic"),
+    "numbers": format([100,149,237]),
 }
 
 
