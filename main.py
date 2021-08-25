@@ -25,7 +25,6 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.path = "Untitled"
         self.setWindowTitle(os.path.basename(self.path))
 
-
         self.setupUi(self)
         self.connectTriggers()
 
