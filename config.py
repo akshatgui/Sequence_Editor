@@ -3,7 +3,7 @@ import highlighters
 
 class Config:
     def __init__(self):
-        self.FILTER_TYPES = "(*.fas);;(*.fa);;(*.fsa);;(*.fastq);;(*.nex);;(*.nxs);;(*.phy);;(*.gb);;(*.txt);;(*.py);;(*.md)"
+        self.FILTER_TYPES = "(*.fas *.fa *.fsa);;(*.fastq);;(*.nex *.nxs);;(*.phy);;(*.gb);;(*.txt);;(*.py);;(*.md)"
         self.HIGHLIGHTERS = {
             "nex": highlighters.NexHighlighter,
             "nxs": highlighters.NexHighlighter,

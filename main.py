@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QDialog,
     QLabel,
+    qApp,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QIcon
@@ -39,6 +40,7 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.action_Open.triggered.connect(self.file_open)
         self.action_Save.triggered.connect(self.file_save)
         self.actionSave_As.triggered.connect(self.file_saveAs)
+        self.action_Exit.triggered.connect(qApp.quit)
         self.action_Undo.triggered.connect(self.editor.undo)
         self.action_Redo.triggered.connect(self.editor.redo)
         self.action_Cut.triggered.connect(self.editor.cut)
