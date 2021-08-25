@@ -4,7 +4,10 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QFileDialog,
     QMessageBox,
+    QDialog,
+    QLabel,
 )
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontDatabase, QIcon
 from config import config
 
@@ -17,9 +20,11 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Sequence Editor")
-        self.setWindowIcon(QIcon("ui/resources/itaxo.jpeg"))
+        self.setWindowIcon(QIcon("ui/resources/itaxo.png"))
 
         self.path = "Untitled"
+        self.setWindowTitle(os.path.basename(self.path))
+
 
         self.setupUi(self)
         self.connectTriggers()
@@ -41,6 +46,7 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.action_Copy.triggered.connect(self.editor.copy)
         self.action_Paste.triggered.connect(self.editor.paste)
         self.action_Wrap_Text.triggered.connect(self.edit_wrap_text)
+        self.action_About.triggered.connect(self.help_about)
 
     def edit_wrap_text(self):
         self.editor.setLineWrapMode(not self.editor.lineWrapMode())
@@ -98,17 +104,17 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         dlg.setIcon(QMessageBox.Critical)
         dlg.show()
 
-    # def openAbout(self):
-    #     mydialog = QDialog()
-    #     mydialog.setWindowTitle("About Us")
-    #     label = QLabel(mydialog)
-    #     label.setText(
-    #         "iTaxotools is a bioinformatic platform designed to facilitate the core work of taxonomists, that is, delimiting, diagnosing and describing species."
-    #     )
-    #     label.adjustSize()
-    #     label.move(100, 60)
-    #     mydialog.setWindowModality(Qt.ApplicationModal)
-    #     mydialog.exec()
+    def help_about(self):
+        mydialog = QDialog()
+        mydialog.setWindowTitle("About Us")
+        label = QLabel(mydialog)
+        label.setText(
+            "iTaxotools is a bioinformatic platform designed to facilitate the core work of taxonomists, that is, delimiting, diagnosing and describing species."
+        )
+        label.adjustSize()
+        label.move(100, 60)
+        mydialog.setWindowModality(Qt.ApplicationModal)
+        mydialog.exec()
 
 
 if __name__ == "__main__":

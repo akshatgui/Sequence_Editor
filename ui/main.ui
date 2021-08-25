@@ -67,8 +67,15 @@
     <addaction name="separator"/>
     <addaction name="action_Wrap_Text"/>
    </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_About"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menuEdit"/>
+   <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -91,6 +98,8 @@
    <addaction name="action_Undo"/>
    <addaction name="action_Redo"/>
    <addaction name="action_Wrap_Text"/>
+   <addaction name="separator"/>
+   <addaction name="action_About"/>
   </widget>
   <action name="action_Open">
    <property name="icon">
@@ -213,6 +222,15 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/itaxo.png</normaloff>resources/itaxo.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;About</string>
    </property>
   </action>
  </widget>
