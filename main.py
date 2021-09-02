@@ -9,10 +9,12 @@ from PyQt5.QtWidgets import (
     qApp,
 )
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFontDatabase, QIcon
-from config import config
-
+from PyQt5.QtGui import QIcon, QFont, QColor
 from PyQt5.uic import loadUiType
+from PyQt5.Qsci import QsciScintilla
+
+import lexers
+from config import config
 
 FORM_CLASS, _ = loadUiType("ui/main.ui")
 
@@ -29,12 +31,33 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.setupUi(self)
         self.connectTriggers()
 
-        fixedFont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        fixedFont.setPointSize(config.FONT_SIZE)
+        # Editor
+        self.editor.setUtf8(True)
+        self.editor.setFont(QFont(config.DEFAULT_FONT, config.FONT_SIZE))
 
-        # Syntax Highlighter
-        self.editor.setStyleSheet(config.EDITOR_STYLE)
-        self.highlighter = config.HIGHLIGHTERS["py"](self.editor.document())
+        self.editor.setMarginType(1, QsciScintilla.NumberMargin)
+        self.editor.setMarginWidth(1, 30)
+        self.editor.setMarginsForegroundColor(QColor(120, 128, 120))
+        self.editor.setMarginLineNumbers(1, True)
+
+        self.LEXERS = {
+            "md": lexers.MarkdownLexer,
+            "py": lexers.PythonLexer,
+            "txt": lexers.PythonLexer,
+            "fa": lexers.FastaLexer,
+            "fas": lexers.FastaLexer,
+            "fsa": lexers.FastaLexer,
+            "fastq": lexers.FastqLexer,
+            "nex": lexers.PythonLexer,
+            "nxs": lexers.PythonLexer,
+            "phy": lexers.PythonLexer,
+        }
+        self.setLexer(self.LEXERS["py"])
+
+    def setLexer(self, lexer):
+        self.lexer = lexer(self.editor)
+        self.lexer.setDefaultFont(QFont(config.DEFAULT_FONT, config.FONT_SIZE))
+        self.editor.setLexer(self.lexer)
 
     def connectTriggers(self):
         self.action_Open.triggered.connect(self.file_open)
@@ -50,21 +73,21 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.action_About.triggered.connect(self.help_about)
 
     def edit_wrap_text(self):
-        self.editor.setLineWrapMode(not self.editor.lineWrapMode())
+        if self.editor.WrapMode == QsciScintilla.WrapWord:
+            self.editor.setWrapMode(QsciScintilla.WrapNone)
+        else:
+            self.editor.setWrapMode(QsciScintilla.WrapWord)
 
     def file_open(self):
         path, _ = QFileDialog.getOpenFileName(
             parent=self, caption="Open file", filter=config.FILTER_TYPES
         )
-
         try:
             text = open(path, "r").read()
-            self.editor.setPlainText(text)
+            self.editor.setText(text)
             self.path = path
             self.setWindowTitle(os.path.basename(path))
-            self.highlighter = config.HIGHLIGHTERS[path.split(".")[-1]](
-                self.editor.document()
-            )
+            self.setLexer(self.LEXERS[path.split(".")[-1]])
 
         except Exception as e:
             self.dialog_message(str(e))
@@ -75,7 +98,7 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             return
 
         try:
-            text = self.editor.toPlainText()
+            text = self.editor.text()
             with open(self.path, "w") as f:
                 f.write(text)
         except Exception as e:
@@ -85,16 +108,14 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         path, _ = QFileDialog.getSaveFileName(
             parent=self, caption="Save file as", filter=config.FILTER_TYPES
         )
-        text = self.editor.toPlainText()
+        text = self.editor.text()
 
         try:
             with open(path, "w") as f:
                 f.write(text)
                 self.path = path
                 self.setWindowTitle(os.path.basename(path))
-                self.highlighter = config.HIGHLIGHTERS[path.split(".")[-1]](
-                    self.editor.document()
-                )
+                self.setLexer(self.LEXERS[path.split(".")[-1]])
 
         except Exception as e:
             self.dialog_message(str(e))
