@@ -6,10 +6,14 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QDialog,
     QLabel,
+    QScrollBar,
     qApp,
 )
-from PyQt5.QtCore import Qt
+
+from PyQt5.QtCore import *
 from PyQt5.QtGui import QIcon, QFont, QColor
+from PyQt5.QtWidgets import QApplication, QWidget
+
 from PyQt5.uic import loadUiType
 from PyQt5.Qsci import QsciScintilla
 
@@ -20,16 +24,30 @@ FORM_CLASS, _ = loadUiType("ui/main.ui")
 
 
 class SequenceEditor(QMainWindow, FORM_CLASS):
+    resized = pyqtSignal()
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Sequence Editor")
         self.setWindowIcon(QIcon("ui/resources/itaxo.png"))
-
+        #self.showMaximized()
         self.path = "Untitled"
+        self.txt = ""
         self.setWindowTitle(os.path.basename(self.path))
 
         self.setupUi(self)
         self.connectTriggers()
+
+
+        #ScrollBar for lazy loading
+        self.scroll = QScrollBar(self)
+        scroll_x = 780
+        scroll_y = 500
+        self.scroll.setGeometry(scroll_x, 60, 20, scroll_y)
+        self.scroll.valueChanged.connect(lambda: self.scroll_text())
+
+        
+
+        
 
         # Editor
         self.editor.setUtf8(True)
@@ -54,6 +72,10 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         }
         self.setLexer(self.LEXERS["py"])
 
+    def scroll_text(self):
+        value = self.scroll.value()
+        self.editor.setText(''.join(self.txt[value:value+(int(self.geometry().height()/20))]))
+
     def setLexer(self, lexer):
         self.lexer = lexer(self.editor)
         self.lexer.setDefaultFont(QFont(config.DEFAULT_FONT, config.FONT_SIZE))
@@ -71,6 +93,22 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.action_Paste.triggered.connect(self.editor.paste)
         self.action_Wrap_Text.triggered.connect(self.edit_wrap_text)
         self.action_About.triggered.connect(self.help_about)
+        self.resized.connect(self.ScrollBarPosition)
+
+
+    #Signal For Screen Size Change
+    def resizeEvent(self, event):
+            self.resized.emit()
+            return super(SequenceEditor, self).resizeEvent(event)
+
+    #Change ScrollBar with screen size
+    def ScrollBarPosition(self):
+        width = self.geometry().width()
+        height = self.geometry().height()
+        self.scroll.setGeometry(width-20, 60, 20, height-100)
+        value = self.scroll.value()
+        self.editor.setText(''.join(self.txt[value:value+(int(self.geometry().height()/20))]))
+        
 
     def edit_wrap_text(self):
         if self.editor.WrapMode == QsciScintilla.WrapWord:
@@ -83,8 +121,13 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             parent=self, caption="Open file", filter=config.FILTER_TYPES
         )
         try:
-            text = open(path, "r").read()
-            self.editor.setText(text)
+            
+            #text = open(path , "r").read()
+            text = open(path , "r").readlines()
+            self.scroll.setMaximum(len(text))            
+            self.txt = text
+            #self.editor.setText(text)
+            self.editor.setText(''.join(text[0:(int(self.geometry().height()/20))]))
             self.path = path
             self.setWindowTitle(os.path.basename(path))
             self.setLexer(self.LEXERS[path.split(".")[-1]])
