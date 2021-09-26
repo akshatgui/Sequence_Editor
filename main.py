@@ -37,7 +37,7 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.setupUi(self)
         self.connectTriggers()
 
-
+        self.value = 0
         #ScrollBar for lazy loading
         self.scroll = QScrollBar(self)
         scroll_x = 780
@@ -73,8 +73,13 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.setLexer(self.LEXERS["py"])
 
     def scroll_text(self):
-        value = self.scroll.value()
-        self.editor.setText(''.join(self.txt[value:value+(int(self.geometry().height()/20))]))
+        buffer_text = self.editor.text()
+        buffer_arr = buffer_text.split("\n")
+        buffer_arr = buffer_arr[:-1]
+        buffer_arr = [ i + "\n" for i in buffer_arr]        
+        self.txt[self.value:self.value+(int(self.geometry().height()/20))] = buffer_arr
+        self.value = self.scroll.value()
+        self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
     def setLexer(self, lexer):
         self.lexer = lexer(self.editor)
