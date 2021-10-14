@@ -66,6 +66,7 @@
     <addaction name="action_Undo"/>
     <addaction name="separator"/>
     <addaction name="action_Wrap_Text"/>
+    <addaction name="action_Find"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -98,6 +99,7 @@
    <addaction name="action_Undo"/>
    <addaction name="action_Redo"/>
    <addaction name="action_Wrap_Text"/>
+   <addaction name="action_Find"/>
    <addaction name="separator"/>
    <addaction name="action_About"/>
   </widget>
@@ -224,6 +226,19 @@
     <string>Ctrl+V</string>
    </property>
   </action>
+  <action name="action_Find">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/paste.png</normaloff>resources/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Find</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  
   <action name="action_About">
    <property name="icon">
     <iconset>

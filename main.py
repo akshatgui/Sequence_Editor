@@ -1,4 +1,5 @@
 import sys, os
+import subprocess
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -47,7 +48,8 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
 
         
 
-        
+        self.find = []
+        self.find_count = 0
 
         # Editor
         self.editor.setUtf8(True)
@@ -97,6 +99,8 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.action_Copy.triggered.connect(self.editor.copy)
         self.action_Paste.triggered.connect(self.editor.paste)
         self.action_Wrap_Text.triggered.connect(self.edit_wrap_text)
+        self.action_Find.triggered.connect(self.find)
+        #self.action_Find_Down.triggered.connect(self.find_down)
         self.action_About.triggered.connect(self.help_about)
         self.resized.connect(self.ScrollBarPosition)
 
@@ -120,6 +124,44 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             self.editor.setWrapMode(QsciScintilla.WrapNone)
         else:
             self.editor.setWrapMode(QsciScintilla.WrapWord)
+
+    
+    
+
+    def find(self):
+        if not (self.find):
+    
+            output = str(subprocess.check_output('findstr /n "sys.arg" .\main.py', shell=True))[2:-1]
+            x = output.split("\\r\\n") 
+            BL = [i.split(":")[0] for i in x][:-1]
+            self.find = [int(i) for i in BL]
+
+            buffer_text = self.editor.text()
+            buffer_arr = buffer_text.split("\n")
+            buffer_arr = buffer_arr[:-1]
+            buffer_arr = [ i + "\n" for i in buffer_arr]        
+            self.txt[self.value:self.value+(int(self.geometry().height()/20))] = buffer_arr
+
+            self.scroll.setValue(self.find[self.find_count]-1)
+            self.value = self.scroll.value()
+            print(self.value)
+            self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
+
+        else:
+            self.find_count = self.find_count + 1
+            try:
+                self.scroll.setValue(self.find[self.find_count]-1)
+                self.value = self.scroll.value()
+                print(self.value)
+                self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
+            except:
+                self.find_count = 0
+                self.scroll.setValue(self.find[self.find_count]-1)
+                self.value = self.scroll.value()
+                self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
+
+
+
 
     def file_open(self):
         path, _ = QFileDialog.getOpenFileName(
