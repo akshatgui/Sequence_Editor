@@ -229,7 +229,7 @@
   <action name="action_Find">
    <property name="icon">
     <iconset>
-     <normaloff>resources/paste.png</normaloff>resources/paste.png</iconset>
+     <normaloff>resources/find.png</normaloff>resources/find.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Find</string>

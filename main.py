@@ -1,5 +1,5 @@
 import sys, os
-import subprocess
+import subprocess 
 from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -10,10 +10,11 @@ from PyQt5.QtWidgets import (
     QScrollBar,
     qApp,
 )
+import platform
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QIcon, QFont, QColor
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget , QInputDialog
 
 from PyQt5.uic import loadUiType
 from PyQt5.Qsci import QsciScintilla
@@ -99,7 +100,7 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.action_Copy.triggered.connect(self.editor.copy)
         self.action_Paste.triggered.connect(self.editor.paste)
         self.action_Wrap_Text.triggered.connect(self.edit_wrap_text)
-        self.action_Find.triggered.connect(self.find)
+        self.action_Find.triggered.connect(self.find_search)
         #self.action_Find_Down.triggered.connect(self.find_down)
         self.action_About.triggered.connect(self.help_about)
         self.resized.connect(self.ScrollBarPosition)
@@ -128,10 +129,15 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
     
     
 
-    def find(self):
+    def find_search(self):
         if not (self.find):
-    
-            output = str(subprocess.check_output('findstr /n "sys.arg" .\main.py', shell=True))[2:-1]
+            name, done1 = QInputDialog.getText(
+            self, 'Input Dialog', 'Find:')
+            os_name = platform.system()
+            if( os_name == "Linux"):
+                output = str(subprocess.check_output('grep -n ' + str(name) + ' ./main.py', shell=True))[2:-1]
+            else:
+                output = str(subprocess.check_output('findstr /n ' + str(name) + ' .\example.fastq', shell=True))[2:-1]
             x = output.split("\\r\\n") 
             BL = [i.split(":")[0] for i in x][:-1]
             self.find = [int(i) for i in BL]
@@ -158,6 +164,7 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
                 self.find_count = 0
                 self.scroll.setValue(self.find[self.find_count]-1)
                 self.value = self.scroll.value()
+                print(self.value)
                 self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
 
