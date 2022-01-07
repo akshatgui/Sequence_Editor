@@ -46,10 +46,12 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         scroll_y = 500
         self.scroll.setGeometry(scroll_x, 60, 20, scroll_y)
         self.scroll.valueChanged.connect(lambda: self.scroll_text())
+        self.scroll.setFocusPolicy(Qt.WheelFocus)
 
         
 
         self.find = []
+        self.find_string = ""
         self.find_count = 0
 
         # Editor
@@ -101,6 +103,9 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.action_Paste.triggered.connect(self.editor.paste)
         self.action_Wrap_Text.triggered.connect(self.edit_wrap_text)
         self.action_Find.triggered.connect(self.find_search)
+        self.action_Find_Prev.triggered.connect(self.find_prev)
+        self.action_Find_Next.triggered.connect(self.find_next)
+        self.action_Replace.triggered.connect(self.replace)
         #self.action_Find_Down.triggered.connect(self.find_down)
         self.action_About.triggered.connect(self.help_about)
         self.resized.connect(self.ScrollBarPosition)
@@ -130,44 +135,68 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
     
 
     def find_search(self):
-        if not (self.find):
-            name, done1 = QInputDialog.getText(
-            self, 'Input Dialog', 'Find:')
-            os_name = platform.system()
-            if( os_name == "Linux"):
-                output = str(subprocess.check_output('grep -n ' + str(name) + ' ./main.py', shell=True))[2:-1]
-            else:
-                output = str(subprocess.check_output('findstr /n ' + str(name) + ' .\example.fastq', shell=True))[2:-1]
-            x = output.split("\\r\\n") 
-            BL = [i.split(":")[0] for i in x][:-1]
-            self.find = [int(i) for i in BL]
+        name, done1 = QInputDialog.getText(
+        self, 'Input Dialog', 'Find:')
+        self.find_string = name
+        os_name = platform.system()
+        if( os_name == "Linux"):        
+            output = str(subprocess.check_output('grep -n ' + str(name) + ' ' + self.path, shell=True))[2:-1]
+        else:
+            t_path = self.path
+            x = t_path.replace("/", "\\")
+            output = str(subprocess.check_output('findstr /n ' + str(name) + ' ' + x, shell=True))[2:-1]
+        x = output.split("\\r\\n") 
+        BL = [i.split(":")[0] for i in x][:-1]
+        self.find = [int(i) for i in BL]
 
-            buffer_text = self.editor.text()
-            buffer_arr = buffer_text.split("\n")
-            buffer_arr = buffer_arr[:-1]
-            buffer_arr = [ i + "\n" for i in buffer_arr]        
-            self.txt[self.value:self.value+(int(self.geometry().height()/20))] = buffer_arr
+        buffer_text = self.editor.text()
+        buffer_arr = buffer_text.split("\n")
+        buffer_arr = buffer_arr[:-1]
+        buffer_arr = [ i + "\n" for i in buffer_arr]        
+        self.txt[self.value:self.value+(int(self.geometry().height()/20))] = buffer_arr
 
+        self.scroll.setValue(self.find[self.find_count]-1)
+        self.value = self.scroll.value()
+        print(self.value)
+        self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
+
+    def find_prev(self):
+        self.find_count = self.find_count - 1
+        try:
+            self.scroll.setValue(self.find[self.find_count]-1)
+            self.value = self.scroll.value()
+            print(self.value)
+            self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
+        except:
+            self.find_count = len(self.find)-1
             self.scroll.setValue(self.find[self.find_count]-1)
             self.value = self.scroll.value()
             print(self.value)
             self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
-        else:
-            self.find_count = self.find_count + 1
-            try:
-                self.scroll.setValue(self.find[self.find_count]-1)
-                self.value = self.scroll.value()
-                print(self.value)
-                self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
-            except:
-                self.find_count = 0
-                self.scroll.setValue(self.find[self.find_count]-1)
-                self.value = self.scroll.value()
-                print(self.value)
-                self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
+    def replace(self):
+        repl, done2 = QInputDialog.getText(
+        self, 'Input Dialog', 'Replace:')
+        self.txt[self.value] = self.txt[self.value].replace(self.find_string,repl)
+        self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
 
+
+
+
+    def find_next(self):
+        self.find_count = self.find_count + 1
+        try:
+            self.scroll.setValue(self.find[self.find_count]-1)
+            self.value = self.scroll.value()
+            print(self.value)
+            self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
+        except:
+            self.find_count = 0
+            self.scroll.setValue(self.find[self.find_count]-1)
+            self.value = self.scroll.value()
+            print(self.value)
+            self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
 
     def file_open(self):
@@ -183,6 +212,8 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             #self.editor.setText(text)
             self.editor.setText(''.join(text[0:(int(self.geometry().height()/20))]))
             self.path = path
+            #print(self.path)
+            #print(os.path.abspath(__file__))
             self.setWindowTitle(os.path.basename(path))
             self.setLexer(self.LEXERS[path.split(".")[-1]])
 
