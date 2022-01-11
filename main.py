@@ -14,7 +14,8 @@ import platform
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QIcon, QFont, QColor
-from PyQt5.QtWidgets import QApplication, QWidget , QInputDialog
+from PyQt5.QtWidgets import (QApplication, QWidget , QInputDialog,
+                             QRadioButton, QLineEdit, QDialogButtonBox, QFormLayout)
 
 from PyQt5.uic import loadUiType
 from PyQt5.Qsci import QsciScintilla
@@ -24,6 +25,29 @@ from config import config
 
 FORM_CLASS, _ = loadUiType("ui/main.ui")
 
+class FindInputDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.text = QLineEdit(self)
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self);
+        self.radioChoice1 = QRadioButton(self)
+        self.radioChoice1.setText('Find in sequence names')
+        self.radioChoice2 = QRadioButton(self)
+        self.radioChoice2.setText('Find in DNA sequences')
+
+        layout = QFormLayout(self)
+        layout.addRow("Find:", self.text)
+
+        layout.addWidget(self.radioChoice1)
+        layout.addWidget(self.radioChoice2)
+        layout.addWidget(buttonBox)
+
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
+
+    def getInputs(self):
+        return (self.text.text(), self.radioChoice1.isChecked(), self.radioChoice2.isChecked())
 
 class SequenceEditor(QMainWindow, FORM_CLASS):
     resized = pyqtSignal()
@@ -135,9 +159,15 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
     
 
     def find_search(self):
-        name, done1 = QInputDialog.getText(
-        self, 'Input Dialog', 'Find:')
-        self.find_string = name
+        dialog = FindInputDialog()
+
+        outputs = ('', False, False)
+
+        if dialog.exec():
+            outputs = dialog.getInputs()
+
+        self.find_string = outputs[0]
+        name = outputs[0]
         os_name = platform.system()
         if( os_name == "Linux"):        
             output = str(subprocess.check_output('grep -n ' + str(name) + ' ' + self.path, shell=True))[2:-1]
@@ -145,7 +175,29 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             t_path = self.path
             x = t_path.replace("/", "\\")
             output = str(subprocess.check_output('findstr /n ' + str(name) + ' ' + x, shell=True))[2:-1]
-        x = output.split("\\r\\n") 
+
+        tmp_x = output.split("\\r\\n") 
+
+        sequence_names = []
+        dna_sequences = []
+
+        for i in tmp_x:
+            try:
+                start = i.split(':')[1]
+                if start[0] == '+' or start[0] == '@':
+                    sequence_names.append(i)
+                else:
+                    dna_sequences.append(i)
+            except:
+                dna_sequences.append(i)
+                sequence_names.append(i)
+
+        x = []
+        if outputs[1]:
+            x += sequence_names
+        if outputs[2]:
+            x += dna_sequences
+
         BL = [i.split(":")[0] for i in x][:-1]
         self.find = [int(i) for i in BL]
 
