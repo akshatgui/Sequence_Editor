@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
 import platform
 
 from PyQt5.QtCore import *
-from PyQt5.QtGui import QIcon, QFont, QColor
+from PyQt5.QtGui import QIcon, QFont, QColor, QBrush
 from PyQt5.QtWidgets import (QApplication, QWidget , QInputDialog,
                              QRadioButton, QLineEdit, QDialogButtonBox, QFormLayout)
 
@@ -22,6 +22,8 @@ from PyQt5.Qsci import QsciScintilla
 
 import lexers
 from config import config
+
+import re
 
 FORM_CLASS, _ = loadUiType("ui/main.ui")
 
@@ -101,6 +103,11 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         }
         self.setLexer(self.LEXERS["py"])
 
+        # search indicator
+        self.SEARCH_INDICATOR_ID = 1
+        self.editor.indicatorDefine(QsciScintilla.FullBoxIndicator, self.SEARCH_INDICATOR_ID)
+        self.highlighted_regions = []
+
     def scroll_text(self):
         buffer_text = self.editor.text()
         buffer_arr = buffer_text.split("\n")
@@ -154,9 +161,6 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             self.editor.setWrapMode(QsciScintilla.WrapNone)
         else:
             self.editor.setWrapMode(QsciScintilla.WrapWord)
-
-    
-    
 
     def find_search(self):
         dialog = FindInputDialog()
@@ -212,6 +216,10 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         print(self.value)
         self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
+        current_window_size_max = self.value+(int(self.geometry().height()/20))
+        self.clear_highlight_util(current_window_size_max)
+        self.find_highlight_util(current_window_size_max)
+
     def find_prev(self):
         self.find_count = self.find_count - 1
         try:
@@ -226,15 +234,15 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             print(self.value)
             self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
+        current_window_size_max = self.value+(int(self.geometry().height()/20))
+        self.clear_highlight_util(current_window_size_max)
+        self.find_highlight_util(current_window_size_max)
+
     def replace(self):
         repl, done2 = QInputDialog.getText(
         self, 'Input Dialog', 'Replace:')
         self.txt[self.value] = self.txt[self.value].replace(self.find_string,repl)
         self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
-
-
-
-
 
     def find_next(self):
         self.find_count = self.find_count + 1
@@ -250,6 +258,19 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             print(self.value)
             self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
+        current_window_size_max = self.value+(int(self.geometry().height()/20))
+        self.clear_highlight_util(current_window_size_max)
+        self.find_highlight_util(current_window_size_max)
+
+    def clear_highlight_util(self, window_max):
+        self.editor.clearIndicatorRange(min(self.value - 5, 0), 0, window_max+1, 0, self.SEARCH_INDICATOR_ID)
+
+    def find_highlight_util(self, window_max):
+        for line in self.find:
+            if line-2 >= self.value - 5 and line-2 <= window_max + 5:
+                for match in re.finditer(self.find_string, self.txt[line-1]):
+                    self.editor.fillIndicatorRange(line-2, match.start(), line-2, match.end(), self.SEARCH_INDICATOR_ID)
+                    # print('**', match.start(), match.end())
 
     def file_open(self):
         path, _ = QFileDialog.getOpenFileName(
