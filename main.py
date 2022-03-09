@@ -167,8 +167,11 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
 
         outputs = ('', False, False)
 
-        if dialog.exec():
+        child = dialog.exec_()
+        if child == QDialog.Accepted:
             outputs = dialog.getInputs()
+        else:
+            return
 
         self.find_string = outputs[0]
         name = outputs[0]
