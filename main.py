@@ -108,6 +108,9 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.editor.indicatorDefine(QsciScintilla.FullBoxIndicator, self.SEARCH_INDICATOR_ID)
         self.highlighted_regions = []
 
+        # Enable/Disable find_next and find_prev
+        self.FIND_ACTIVE = False
+
     def scroll_text(self):
         buffer_text = self.editor.text()
         buffer_arr = buffer_text.split("\n")
@@ -233,7 +236,12 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.clear_highlight_util(current_window_size_max)
         self.find_highlight_util(current_window_size_max)
 
+        self.FIND_ACTIVE = True
+
     def find_prev(self):
+        if not self.FIND_ACTIVE:
+            return
+
         self.find_count = self.find_count - 1
         try:
             self.scroll.setValue(self.find[self.find_count]-1)
@@ -252,12 +260,18 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.find_highlight_util(current_window_size_max)
 
     def replace(self):
+        if not self.FIND_ACTIVE:
+            return
+
         repl, done2 = QInputDialog.getText(
         self, 'Input Dialog', 'Replace:')
         self.txt[self.value] = self.txt[self.value].replace(self.find_string,repl)
         self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
     def find_next(self):
+        if not self.FIND_ACTIVE:
+            return
+
         self.find_count = self.find_count + 1
         try:
             self.scroll.setValue(self.find[self.find_count]-1)
