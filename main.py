@@ -173,12 +173,17 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.find_string = outputs[0]
         name = outputs[0]
         os_name = platform.system()
-        if( os_name == "Linux"):        
-            output = str(subprocess.check_output('grep -n ' + str(name) + ' ' + self.path, shell=True))[2:-1]
-        else:
-            t_path = self.path
-            x = t_path.replace("/", "\\")
-            output = str(subprocess.check_output('findstr /n ' + str(name) + ' ' + x, shell=True))[2:-1]
+        try:
+            if( os_name == "Linux"):
+                output = str(subprocess.check_output('grep -n ' + str(name) + ' ' + self.path, shell=True))[2:-1]
+            else:
+                t_path = self.path
+                x = t_path.replace("/", "\\")
+                output = str(subprocess.check_output('findstr /n ' + str(name) + ' ' + x, shell=True))[2:-1]
+        except:
+            # Not found
+            self.dialog_message("Search string not found")
+            return
 
         tmp_x = output.split("\\r\\n") 
 
@@ -204,6 +209,11 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
 
         BL = [i.split(":")[0] for i in x][:-1]
         self.find = [int(i) for i in BL]
+
+        if len(self.find) == 0:
+            # Not found
+            self.dialog_message("Search string not found")
+            return
 
         buffer_text = self.editor.text()
         buffer_arr = buffer_text.split("\n")
