@@ -184,7 +184,7 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
                 output = str(subprocess.check_output('grep -n ' + str(name) + ' ' + self.path, shell=True))[2:-1]
             else:
                 t_path = self.path
-                x = t_path.replace("/", "\\")
+                x = '\"' + t_path.replace("/", "\\") + '\"'
                 output = str(subprocess.check_output('findstr /n ' + str(name) + ' ' + x, shell=True))[2:-1]
         except:
             # Not found
