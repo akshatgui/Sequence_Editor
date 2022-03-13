@@ -234,7 +234,6 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
 
         self.scroll.setValue(self.find[self.find_count]-1)
         self.value = self.scroll.value()
-        print(self.value)
         self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
         current_window_size_max = self.value+(int(self.geometry().height()/20))
@@ -251,13 +250,11 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         try:
             self.scroll.setValue(self.find[self.find_count]-1)
             self.value = self.scroll.value()
-            print(self.value)
             self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
         except:
             self.find_count = len(self.find)-1
             self.scroll.setValue(self.find[self.find_count]-1)
             self.value = self.scroll.value()
-            print(self.value)
             self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
         current_window_size_max = self.value+(int(self.geometry().height()/20))
@@ -281,13 +278,11 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         try:
             self.scroll.setValue(self.find[self.find_count]-1)
             self.value = self.scroll.value()
-            print(self.value)
             self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
         except:
             self.find_count = 0
             self.scroll.setValue(self.find[self.find_count]-1)
             self.value = self.scroll.value()
-            print(self.value)
             self.editor.setText(''.join(self.txt[self.value:self.value+(int(self.geometry().height()/20))]))
 
         current_window_size_max = self.value+(int(self.geometry().height()/20))
@@ -303,13 +298,13 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             offset = 0
 
         for line in self.find:
-        #     if line-2 >= self.value - 5 and line-2 <= window_max + 5:
-            print(line)
-            print('line sample', self.txt[line-1][:10])
-            for match in re.finditer(self.find_string, self.txt[line-1]):
-                self.editor.fillIndicatorRange(line-2-offset, 0, line-1-offset,
-                        0, self.SEARCH_INDICATOR_ID)
-                print('**', match.start(), match.end())
+            if line-2 >= self.value - 5 and line-2 <= window_max + 5:
+                print(line)
+                # print('line sample', self.txt[line-1][:10])
+                for match in re.finditer(self.find_string, self.txt[line-1]):
+                    self.editor.fillIndicatorRange(line-2-offset, 0, line-1-offset,
+                            0, self.SEARCH_INDICATOR_ID)
+                    # print('**', match.start(), match.end())
 
     def file_open(self):
         path, _ = QFileDialog.getOpenFileName(
