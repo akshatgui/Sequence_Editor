@@ -106,7 +106,6 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         # search indicator
         self.SEARCH_INDICATOR_ID = 1
         self.editor.indicatorDefine(QsciScintilla.FullBoxIndicator, self.SEARCH_INDICATOR_ID)
-        self.highlighted_regions = []
 
         # Enable/Disable find_next and find_prev
         self.FIND_ACTIVE = False
@@ -221,6 +220,8 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             self.dialog_message("Search string not found")
             return
 
+        self.find_count = 0
+
         buffer_text = self.editor.text()
         buffer_arr = buffer_text.split("\n")
         buffer_arr = buffer_arr[:-1]
@@ -294,10 +295,12 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
 
     def find_highlight_util(self, window_max):
         for line in self.find:
-            if line-2 >= self.value - 5 and line-2 <= window_max + 5:
-                for match in re.finditer(self.find_string, self.txt[line-1]):
-                    self.editor.fillIndicatorRange(line-2, match.start(), line-2, match.end(), self.SEARCH_INDICATOR_ID)
-                    # print('**', match.start(), match.end())
+        #     if line-2 >= self.value - 5 and line-2 <= window_max + 5:
+            print(line)
+            print('line sample', self.txt[line-1][:10])
+            for match in re.finditer(self.find_string, self.txt[line-1]):
+                self.editor.fillIndicatorRange(line-2, match.start(), line-2, match.end(), self.SEARCH_INDICATOR_ID)
+                print('**', match.start(), match.end())
 
     def file_open(self):
         path, _ = QFileDialog.getOpenFileName(
