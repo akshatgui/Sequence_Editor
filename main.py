@@ -206,10 +206,14 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
                 dna_sequences.append(i)
                 sequence_names.append(i)
 
+        # 0 for sequence names, 1 for dna sequences
+        self.search_option = 0
+
         x = []
         if outputs[1]:
             x += sequence_names
         if outputs[2]:
+            self.search_option = 1
             x += dna_sequences
 
         BL = [i.split(":")[0] for i in x][:-1]
@@ -294,12 +298,17 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         self.editor.clearIndicatorRange(min(self.value - 5, 0), 0, window_max+1, 0, self.SEARCH_INDICATOR_ID)
 
     def find_highlight_util(self, window_max):
+        offset = 1
+        if self.search_option == 1:
+            offset = 0
+
         for line in self.find:
         #     if line-2 >= self.value - 5 and line-2 <= window_max + 5:
             print(line)
             print('line sample', self.txt[line-1][:10])
             for match in re.finditer(self.find_string, self.txt[line-1]):
-                self.editor.fillIndicatorRange(line-2, match.start(), line-2, match.end(), self.SEARCH_INDICATOR_ID)
+                self.editor.fillIndicatorRange(line-2-offset, 0, line-1-offset,
+                        0, self.SEARCH_INDICATOR_ID)
                 print('**', match.start(), match.end())
 
     def file_open(self):
