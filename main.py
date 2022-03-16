@@ -195,10 +195,14 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         sequence_names = []
         dna_sequences = []
 
+
+        file_ext = self.path.split(".")[-1]
         for i in tmp_x:
             try:
                 start = i.split(':')[1]
-                if start[0] == '+' or start[0] == '@':
+                if file_ext == 'fastq' and (start[0] == '+' or start[0] == '@'):
+                    sequence_names.append(i)
+                if file_ext == 'fas' and (start[0] == '>'):
                     sequence_names.append(i)
                 else:
                     dna_sequences.append(i)
