@@ -190,7 +190,7 @@
      <normaloff>resources/wrap.png</normaloff>resources/wrap.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Wrap Text</string>
+    <string>&amp;Wrap/Unwrap Text</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+W</string>

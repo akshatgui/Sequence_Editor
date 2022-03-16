@@ -110,6 +110,9 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         # Enable/Disable find_next and find_prev
         self.FIND_ACTIVE = False
 
+        # Keep track of text wrapping
+        self.WRAP_MODE = 'unwrapped'
+
     def scroll_text(self):
         buffer_text = self.editor.text()
         buffer_arr = buffer_text.split("\n")
@@ -159,10 +162,12 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
         
 
     def edit_wrap_text(self):
-        if self.editor.WrapMode == QsciScintilla.WrapWord:
-            self.editor.setWrapMode(QsciScintilla.WrapNone)
-        else:
+        if self.WRAP_MODE == 'unwrapped':
             self.editor.setWrapMode(QsciScintilla.WrapWord)
+            self.WRAP_MODE = 'wrapped'
+        else:
+            self.editor.setWrapMode(QsciScintilla.WrapNone)
+            self.WRAP_MODE = 'unwrapped'
 
     def find_search(self):
         dialog = FindInputDialog()
