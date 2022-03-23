@@ -99,7 +99,7 @@ class SequenceEditor(QMainWindow, FORM_CLASS):
             "fastq": lexers.FastqLexer,
             "nex": lexers.PythonLexer,
             "nxs": lexers.PythonLexer,
-            "phy": lexers.PythonLexer,
+            "phy": lexers.PhylipLexer,
         }
         self.setLexer(self.LEXERS["py"])
 
